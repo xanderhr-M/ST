@@ -249,7 +249,7 @@ tr:nth-child(even) td{background:var(--paper)}
         <span>影片尚未設定，請通知管理員至後台設定影片連結</span>
       </div>
       <!-- YouTube IFrame API 會在此建立 iframe -->
-      <div id="yt-player" style="position:absolute;inset:0;width:100%;height:100%"></div>
+      <div id="yt-player-wrap" style="position:absolute;inset:0;width:100%;height:100%"><div id="yt-player" style="width:100%;height:100%"></div></div>
       <!-- 點擊遮罩：啟動播放 -->
       <div id="video-play-overlay" onclick="overlayStartTimer()" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,.5);transition:opacity .3s;z-index:10">
         <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)">
@@ -843,7 +843,7 @@ async function fetchEmployeeDB() {
 let YOUTUBE_VIDEO_ID = 'XifZvEFVEak';
 let ytPlayer = null;
 let ytReady = false;
-let ytLastTime = 0;
+let ytMaxTime = 0;   // 已合法觀看到的最遠位置
 let ytSeekWatcher = null;
 
 // YouTube IFrame API 就緒時自動呼叫
@@ -888,44 +888,59 @@ async function goVideo(){
   }
   document.getElementById('video-no-setting').style.display='none';
 
+  // destroy() 會移除原本的 div，每次重新建立
+  var wrap = document.getElementById('yt-player-wrap');
+  wrap.innerHTML = '<div id="yt-player" style="width:100%;height:100%"></div>';
+
+  show('video');
+
   // 等待 YouTube API 就緒
   var waitReady = function(cb){
     if(ytReady && typeof YT !== 'undefined' && YT.Player) cb();
     else setTimeout(function(){ waitReady(cb); }, 200);
   };
+  ytMaxTime = 0;
   waitReady(function(){
     ytPlayer = new YT.Player('yt-player',{
       videoId: YOUTUBE_VIDEO_ID,
       playerVars:{ rel:0, modestbranding:1, controls:1, disablekb:1 },
       events:{
         onStateChange: function(e){
-          if(e.data === YT.PlayerState.PLAYING){
-            ytLastTime = ytPlayer.getCurrentTime();
-            ytSeekWatcher = setInterval(function(){
-              var cur = ytPlayer.getCurrentTime();
-              if(cur > ytLastTime + 2){
-                // 使用者快轉，強制倒回
-                ytPlayer.seekTo(ytLastTime, true);
-              } else {
-                ytLastTime = cur;
-              }
-            }, 500);
-          } else {
+          if(e.data === YT.PlayerState.ENDED){
             clearInterval(ytSeekWatcher);
+            onVideoEnded();
           }
-          if(e.data === YT.PlayerState.ENDED) onVideoEnded();
         }
       }
     });
+    // 播放器建立後啟動監控（不依賴 onReady）
+    ytSeekWatcher = setInterval(function(){
+      if(!ytPlayer || typeof ytPlayer.getCurrentTime !== 'function') return;
+      var state = ytPlayer.getPlayerState();
+      if(state !== YT.PlayerState.PLAYING && state !== YT.PlayerState.PAUSED) return;
+      var cur = ytPlayer.getCurrentTime();
+      if(state === YT.PlayerState.PLAYING){
+        if(cur > ytMaxTime + 2){
+          ytPlayer.seekTo(ytMaxTime, true);
+        } else if(cur > ytMaxTime){
+          ytMaxTime = cur;
+        }
+      } else if(state === YT.PlayerState.PAUSED){
+        if(cur > ytMaxTime + 2) ytPlayer.seekTo(ytMaxTime, true);
+      }
+    }, 500);
   });
-  show('video');
 }
 
 function overlayStartTimer(){
   var overlay = document.getElementById('video-play-overlay');
   overlay.style.opacity='0';
   setTimeout(function(){ overlay.style.display='none'; }, 300);
-  if(ytPlayer) ytPlayer.playVideo();
+  var tryPlay = function(){
+    if(ytPlayer && typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
+    else setTimeout(tryPlay, 200);
+  };
+  tryPlay();
 }
 
 function onVideoEnded(){
