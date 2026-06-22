@@ -259,6 +259,7 @@ tr:nth-child(even) td{background:var(--paper)}
       </div>
     </div>
     <p id="video-hint" style="margin-top:1rem;font-size:.85rem;color:var(--ink3)">▶ 請完整觀看影片，系統將在影片結束後自動解鎖</p>
+    <p id="video-timer" style="font-size:.82rem;color:var(--ink3);margin-top:.25rem;display:none"></p>
     <div style="margin-top:1rem;display:flex;justify-content:center">
       <button id="btn-after-video" class="btn-start" style="opacity:.4;cursor:not-allowed;pointer-events:none" onclick="goSlides()">進入課程 →</button>
     </div>
@@ -849,11 +850,46 @@ async function fetchVideoSettings(){
   } catch(e){ console.error('[VideoSettings]', e); }
 }
 
-// 監聽 YouTube postMessage 偵測影片結束
+let ytMaxTime = 0;      // 已合法觀看到的最遠位置
+let ytIsPlaying = false;
+
+// 監聽 YouTube postMessage：偵測結束、剩餘時間、防跳段
 window.addEventListener('message', function(e){
   try {
     var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-    if(data.event === 'onStateChange' && data.info === 0) onVideoEnded();
+
+    // 播放狀態改變
+    if(data.event === 'onStateChange'){
+      if(data.info === 0) { onVideoEnded(); return; }
+      ytIsPlaying = (data.info === 1); // 1=playing, 2=paused
+    }
+
+    // 定期回報時間（每秒約一次）
+    if(data.event === 'infoDelivery' && data.info){
+      var cur = data.info.currentTime, dur = data.info.duration;
+      if(cur == null || dur == null || dur <= 0) return;
+
+      // 防跳段：若當前位置超過合法最遠位置 2 秒，強制拉回
+      if(cur > ytMaxTime + 2){
+        var iframe = document.getElementById('yt-iframe');
+        if(iframe && iframe.contentWindow){
+          iframe.contentWindow.postMessage(
+            JSON.stringify({event:'command', func:'seekTo', args:[ytMaxTime, true], id:1, channel:'widget'}), '*');
+        }
+        return;
+      }
+      // 正常播放中：更新最遠位置
+      if(ytIsPlaying && cur > ytMaxTime) ytMaxTime = cur;
+
+      // 更新剩餘時間顯示
+      var rem = Math.max(0, Math.floor(dur - cur));
+      var m = Math.floor(rem / 60), s = rem % 60;
+      var timerEl = document.getElementById('video-timer');
+      if(timerEl){
+        timerEl.style.display = 'block';
+        timerEl.textContent = '剩餘時間：' + m + ' 分 ' + (s < 10 ? '0' : '') + s + ' 秒';
+      }
+    }
   } catch(ex){}
 });
 
@@ -891,6 +927,16 @@ async function goVideo(){
   iframe.src = 'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID
     + '?enablejsapi=1&controls=0&rel=0&modestbranding=1&playsinline=1';
   iframe.style.display = 'block';
+
+  // iframe 載入後訂閱 YouTube 事件（取得 infoDelivery 時間資訊）
+  iframe.onload = function(){
+    iframe.contentWindow.postMessage(
+      JSON.stringify({event:'listening', id:1, channel:'widget'}), '*');
+  };
+
+  // 隱藏計時器（等播放後才顯示）
+  var timerEl = document.getElementById('video-timer');
+  if(timerEl) timerEl.style.display = 'none';
 
   show('video');
 }
