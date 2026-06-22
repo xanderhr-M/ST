@@ -849,12 +849,29 @@ async function fetchVideoSettings(){
   } catch(e){ console.error('[VideoSettings]', e); }
 }
 
-let ytMaxTime = 0; // 已合法觀看到的最遠位置
+let ytMaxTime = -1; // -1=尚未初始化，>=0=已合法觀看最遠位置
+
+function ytSendCommand(func, args){
+  var iframe = document.getElementById('yt-iframe');
+  if(iframe && iframe.contentWindow)
+    iframe.contentWindow.postMessage(
+      JSON.stringify({event:'command', func:func, args:args, id:1, channel:'widget'}), '*');
+}
+
+function ytSubscribe(){
+  var iframe = document.getElementById('yt-iframe');
+  if(iframe && iframe.contentWindow)
+    iframe.contentWindow.postMessage(
+      JSON.stringify({event:'listening', id:1, channel:'widget'}), '*');
+}
 
 // 監聽 YouTube postMessage：偵測結束、防跳段
 window.addEventListener('message', function(e){
   try {
     var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+
+    // YouTube 播放器就緒後才訂閱，確保 infoDelivery 正常收到
+    if(data.event === 'onReady'){ ytSubscribe(); return; }
 
     if(data.event === 'onStateChange' && data.info === 0){ onVideoEnded(); return; }
 
@@ -862,16 +879,17 @@ window.addEventListener('message', function(e){
       var cur = data.info.currentTime, dur = data.info.duration;
       if(cur == null || dur == null || dur <= 0) return;
 
+      if(ytMaxTime < 0){
+        // 第一次收到：初始化，不判斷跳段
+        ytMaxTime = cur;
+        return;
+      }
+
       if(cur > ytMaxTime + 2){
         // 跳段超前：強制拉回合法位置
-        var iframe = document.getElementById('yt-iframe');
-        if(iframe && iframe.contentWindow){
-          iframe.contentWindow.postMessage(
-            JSON.stringify({event:'command', func:'seekTo', args:[ytMaxTime, true], id:1, channel:'widget'}), '*');
-        }
-      } else {
-        // 正常範圍（播放或暫停）：更新最遠位置
-        if(cur > ytMaxTime) ytMaxTime = cur;
+        ytSendCommand('seekTo', [ytMaxTime, true]);
+      } else if(cur > ytMaxTime){
+        ytMaxTime = cur;
       }
     }
   } catch(ex){}
