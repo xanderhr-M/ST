@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+  // 提早定義，避免 IFrame API 在主 script 執行前觸發被漏掉
+  window._ytReadyFlag = false;
+  function onYouTubeIframeAPIReady(){ window._ytReadyFlag = true; }
+</script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <title>職場不法侵害及霸凌預防 — 主管教育訓練</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -844,11 +849,8 @@ async function fetchVideoSettings(){
 }
 
 let ytPlayer  = null;
-let ytReady   = false;
 let ytMaxTime = 0;
 let ytWatcher = null;
-
-function onYouTubeIframeAPIReady(){ ytReady = true; }
 
 function startSeekWatcher(){
   clearInterval(ytWatcher);
@@ -907,7 +909,7 @@ async function goVideo(){
   show('video');
 
   var waitReady = function(cb){
-    if(ytReady && typeof YT !== 'undefined' && YT.Player) cb();
+    if(window._ytReadyFlag && typeof YT !== 'undefined' && YT.Player) cb();
     else setTimeout(function(){ waitReady(cb); }, 200);
   };
   waitReady(function(){
