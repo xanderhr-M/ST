@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://www.youtube.com/iframe_api"></script>
 <title>職場不法侵害及霸凌預防 — 主管教育訓練</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
@@ -247,9 +248,10 @@ tr:nth-child(even) td{background:var(--paper)}
         <span style="font-size:2.5rem">🎬</span>
         <span>影片尚未設定，請通知管理員至後台設定影片連結</span>
       </div>
-      <!-- YouTube 普通 iframe，controls=0 隱藏進度條防止跳段 -->
-      <iframe id="yt-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen
-        style="position:absolute;inset:0;width:100%;height:100%;display:none"></iframe>
+      <!-- YouTube IFrame API 播放器容器 -->
+      <div id="yt-player-wrap" style="position:absolute;inset:0;width:100%;height:100%">
+        <div id="yt-player" style="width:100%;height:100%"></div>
+      </div>
       <!-- 點擊遮罩：啟動播放 -->
       <div id="video-play-overlay" onclick="overlayStartVideo()" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,.5);transition:opacity .3s;z-index:10">
         <div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;margin-bottom:.9rem;box-shadow:0 4px 20px rgba(0,0,0,.4)">
@@ -849,63 +851,29 @@ async function fetchVideoSettings(){
   } catch(e){ console.error('[VideoSettings]', e); }
 }
 
-let ytMaxTime = -1;   // -1=尚未初始化
-let ytMaxTimer = null; // 播放期間本地計時器，讓 ytMaxTime 跟上正常進度
+let ytPlayer  = null;
+let ytReady   = false;
+let ytMaxTime = 0;
+let ytWatcher = null;
 
-function ytSendCommand(func, args){
-  var iframe = document.getElementById('yt-iframe');
-  if(iframe && iframe.contentWindow)
-    iframe.contentWindow.postMessage(
-      JSON.stringify({event:'command', func:func, args:args, id:1, channel:'widget'}), '*');
-}
+function onYouTubeIframeAPIReady(){ ytReady = true; }
 
-function ytSubscribe(){
-  var iframe = document.getElementById('yt-iframe');
-  if(iframe && iframe.contentWindow)
-    iframe.contentWindow.postMessage(
-      JSON.stringify({event:'listening', id:1, channel:'widget'}), '*');
-}
-
-// 監聽 YouTube postMessage：偵測結束、防跳段
-window.addEventListener('message', function(e){
-  try {
-    var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-
-    if(data.event === 'onReady'){ ytSubscribe(); return; }
-
-    if(data.event === 'onStateChange'){
-      if(data.info === 0){ onVideoEnded(); return; }
-      if(data.info === 1){
-        // 播放中：啟動本地計時器每 0.5 秒推進 ytMaxTime
-        clearInterval(ytMaxTimer);
-        ytMaxTimer = setInterval(function(){
-          if(ytMaxTime >= 0) ytMaxTime += 0.5;
-        }, 500);
-      } else {
-        // 暫停/緩衝：停止計時器，ytMaxTime 凍結在當前位置
-        clearInterval(ytMaxTimer);
-      }
-      return;
+function startSeekWatcher(){
+  clearInterval(ytWatcher);
+  ytWatcher = setInterval(function(){
+    if(!ytPlayer || typeof ytPlayer.getPlayerState !== 'function') return;
+    var state = ytPlayer.getPlayerState();
+    if(state !== 1 && state !== 2) return; // 只在播放(1)或暫停(2)時檢查
+    var cur = ytPlayer.getCurrentTime();
+    if(cur > ytMaxTime + 3){
+      // 跳段超前：拉回合法位置
+      ytPlayer.seekTo(ytMaxTime, true);
+    } else if(state === 1 && cur > ytMaxTime){
+      // 正常播放：更新最遠位置
+      ytMaxTime = cur;
     }
-
-    if(data.event === 'infoDelivery' && data.info){
-      var cur = data.info.currentTime, dur = data.info.duration;
-      if(cur == null || dur == null || dur <= 0) return;
-
-      if(ytMaxTime < 0){
-        ytMaxTime = cur; // 第一次收到：初始化
-        return;
-      }
-
-      if(cur > ytMaxTime + 3){
-        // 跳段超前（超過計時器誤差）：強制拉回
-        ytSendCommand('seekTo', [ytMaxTime, true]);
-      } else if(cur > ytMaxTime){
-        ytMaxTime = cur; // infoDelivery 同步修正
-      }
-    }
-  } catch(ex){}
-});
+  }, 500);
+}
 
 let userData = {};
 let progressStatus = 'none'; // none | video_done | quiz_failed | quiz_passed
@@ -931,40 +899,47 @@ async function goVideo(){
 
   if(!YOUTUBE_VIDEO_ID){
     document.getElementById('video-no-setting').style.display='flex';
-    document.getElementById('yt-iframe').style.display='none';
     show('video'); return;
   }
   document.getElementById('video-no-setting').style.display='none';
 
-  // 設定 iframe src（controls=0 隱藏進度條、enablejsapi=1 接收 postMessage）
-  var iframe = document.getElementById('yt-iframe');
-  iframe.src = 'https://www.youtube.com/embed/' + YOUTUBE_VIDEO_ID
-    + '?enablejsapi=1&controls=1&rel=0&modestbranding=1&playsinline=1';
-  iframe.style.display = 'block';
+  // 清除舊播放器與計時器
+  clearInterval(ytWatcher);
+  if(ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer = null; }
+  ytMaxTime = 0;
 
-  // iframe 載入後訂閱 YouTube 事件（取得 infoDelivery 時間資訊）
-  iframe.onload = function(){
-    iframe.contentWindow.postMessage(
-      JSON.stringify({event:'listening', id:1, channel:'widget'}), '*');
-  };
-
-  // 隱藏計時器（等播放後才顯示）
-  var timerEl = document.getElementById('video-timer');
-  if(timerEl) timerEl.style.display = 'none';
+  // destroy() 會移除原 div，每次重新建立
+  document.getElementById('yt-player-wrap').innerHTML =
+    '<div id="yt-player" style="width:100%;height:100%"></div>';
 
   show('video');
+
+  var waitReady = function(cb){
+    if(ytReady && typeof YT !== 'undefined' && YT.Player) cb();
+    else setTimeout(function(){ waitReady(cb); }, 200);
+  };
+  waitReady(function(){
+    ytPlayer = new YT.Player('yt-player', {
+      videoId: YOUTUBE_VIDEO_ID,
+      playerVars: { rel:0, modestbranding:1, controls:1 },
+      events: {
+        onReady: function(){ startSeekWatcher(); },
+        onStateChange: function(e){
+          if(e.data === YT.PlayerState.ENDED){
+            clearInterval(ytWatcher);
+            onVideoEnded();
+          }
+        }
+      }
+    });
+  });
 }
 
 function overlayStartVideo(){
   var overlay = document.getElementById('video-play-overlay');
   overlay.style.opacity='0';
   setTimeout(function(){ overlay.style.display='none'; }, 300);
-  // 透過 postMessage 命令 iframe 播放
-  var iframe = document.getElementById('yt-iframe');
-  if(iframe && iframe.contentWindow){
-    iframe.contentWindow.postMessage(
-      JSON.stringify({event:'command', func:'playVideo', args:''}), '*');
-  }
+  if(ytPlayer && typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
 }
 
 function onVideoEnded(){
