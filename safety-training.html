@@ -826,19 +826,11 @@ let startTime = null;
 // ═══════════════ 員工資料庫（指定人員）═══════════════
 // 請將實際員工工號、姓名、部門填入此處
 // 員工資料從 Google Sheets 動態載入（不再寫死）
-let EMPLOYEE_DB = {};
-
-async function fetchEmployeeDB() {
-  if (Object.keys(EMPLOYEE_DB).length > 0) return; // 已載入過，不重複請求
+async function lookupEmployeeFromAPI(empId) {
   try {
-    const r = await fetch(GOOGLE_SCRIPT_URL + '?action=getDesignated');
-    const d = await r.json();
-    const list = d.designated || [];
-    list.forEach(emp => {
-      const id = String(emp.empId).trim();
-      if (id) EMPLOYEE_DB[id] = { name: emp.name || '', dept: emp.dept || '' };
-    });
-  } catch(e) {}
+    const r = await fetch(GOOGLE_SCRIPT_URL + '?action=lookupEmployee&empId=' + encodeURIComponent(empId));
+    return await r.json(); // { found, source, name, dept } or { found: false }
+  } catch(e) { return { found: false }; }
 }
 
 // ═══════════════ 影片設定（YouTube iframe）═══════════════
@@ -979,21 +971,19 @@ async function lookupEmployee(){
   const btn = document.getElementById('btn-lookup');
   btn.disabled = true; btn.textContent = '查詢中…';
 
-  // 從 Google Sheets 載入指定人員名單（第一次查詢時載入）
-  await fetchEmployeeDB();
-
-  const found = EMPLOYEE_DB[empId];
+  // 依序查：指定人員 → 測驗紀錄 → 影片紀錄
+  const result = await lookupEmployeeFromAPI(empId);
   const manualArea = document.getElementById('login-manual-fields');
   const userInfo = document.getElementById('login-user-info');
 
-  if(found){
-    userData = { empId, name:found.name, dept:found.dept };
-    manualArea.style.display = 'none';
-    document.getElementById('login-show-name').textContent = found.name;
-    document.getElementById('login-show-dept').textContent = found.dept;
+  if(result.found){
+    userData = { empId, name: result.name, dept: result.dept, autoFilled: true };
+    document.getElementById('login-show-name').textContent = result.name;
+    document.getElementById('login-show-dept').textContent = result.dept;
     userInfo.style.display = 'block';
+    manualArea.style.display = 'none';
   } else {
-    userData = { empId, name:'', dept:'' };
+    userData = { empId, name:'', dept:'', autoFilled: false };
     manualArea.style.display = 'block';
     userInfo.style.display = 'none';
   }
@@ -1038,8 +1028,8 @@ function showLoginProgress(status){
 }
 
 function proceedAfterLogin(){
-  // 若非指定人員，先驗證手動填寫欄位
-  if(!EMPLOYEE_DB[userData.empId]){
+  // 若查無資料，先驗證手動填寫欄位
+  if(!userData.autoFilled){
     const name = document.getElementById('login-name').value.trim();
     const dept = document.getElementById('login-dept').value.trim();
     if(!name || !dept){ alert('請填寫姓名與部門'); return; }
