@@ -967,7 +967,7 @@ function goRegister(){
 
 // ═══════════════ 員工登入 ═══════════════
 async function lookupEmployee(){
-  const empId = document.getElementById('login-empid').value.trim();
+  const empId = document.getElementById('login-empid').value.trim().toUpperCase();
   if(!empId){ alert('請輸入員工工號'); return; }
 
   const btn = document.getElementById('btn-lookup');
