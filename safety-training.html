@@ -217,7 +217,8 @@ tr:nth-child(even) td{background:var(--paper)}
 <div id="screen-login" class="screen">
   <div class="login-card">
     <h2>員工訓練登入</h2>
-    <p>請輸入工號查詢您的訓練進度</p>
+    <p style="margin-bottom:0">請輸入工號查詢您的訓練進度</p>
+    <p style="color:red;font-weight:bold;margin-bottom:.5rem;">注意: 工號須為 X 開頭, 例如 X123456</p>
     <div class="login-id-row">
       <input type="text" id="login-empid" placeholder="請輸入員工工號" onkeydown="if(event.key==='Enter')lookupEmployee()">
       <button class="btn btn-primary" onclick="lookupEmployee()" id="btn-lookup">查詢</button>
