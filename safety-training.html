@@ -281,7 +281,7 @@ tr:nth-child(even) td{background:var(--paper)}
     <nav class="sidebar-nav" id="sidebar-nav"></nav>
     <div class="sidebar-footer">
       <div class="progress-bar"><div class="progress-fill" id="sidebar-progress"></div></div>
-      <div class="progress-text" id="sidebar-progress-text">0 / 10 完成</div>
+      <div class="progress-text" id="sidebar-progress-text">0 / 13 完成</div>
     </div>
   </div>
   <div class="slide-main">
@@ -370,40 +370,93 @@ tr:nth-child(even) td{background:var(--paper)}
 // ═══════════════ SLIDES ═══════════════
 const slides = [
 {
-  chapter:'第一章　定義與認定',
-  title:'什麼是「職場霸凌」？',
-  subtitle:'法律明定五大要件，缺一不可',
+  chapter:'第一章　立法背景',
+  title:'立法背景與修法重點',
+  subtitle:'為何要立法？此次修法規模',
   html:`
-  <div class="law-article">
-    <span class="art-num">法律定義（職安法第22條之1）</span>
-    <p>勞工於勞動場所執行職務，因事業單位人員利用職務或權勢，逾越業務上必要且合理範圍，持續以冒犯、威脅、冷落、孤立、侮辱或其他不當言詞或行為，致其身心健康遭受危害。</p>
-  </div>
   <div class="card-grid">
-    <div class="card blue"><div class="card-title">① 勞動場所執行職務</div><div class="card-body">含出差、遠距工作等雇主指派的場所，不限公司內部</div></div>
-    <div class="card blue"><div class="card-title">② 利用職務或權勢</div><div class="card-body">不限上對下，平行同事、部屬對主管均可能成立</div></div>
-    <div class="card blue"><div class="card-title">③ 逾越合理管理範圍</div><div class="card-body">手段與業務目的不符比例原則，非正當管理需要</div></div>
-    <div class="card purple"><div class="card-title">④ 反覆性或持續性</div><div class="card-body">非單次偶發衝突，需有持續或多次重複的行為</div></div>
-    <div class="card purple"><div class="card-title">⑤ 造成身心健康危害</div><div class="card-body">引發失眠、焦慮、憂鬱等身心症狀有客觀影響</div></div>
+    <div class="card red">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">事件導火線</div>
+      <div class="card-body">2024年勞動部公務員輕生事件震驚社會，暴露出制度性防治缺口</div>
+    </div>
+    <div class="card orange">
+      <div class="card-icon">📋</div>
+      <div class="card-title">過去的不足</div>
+      <div class="card-body">過去霸凌僅靠道德規範，缺乏法律強制力，主管機關無法積極介入</div>
+    </div>
+    <div class="card purple">
+      <div class="card-icon">🔍</div>
+      <div class="card-title">救濟困境</div>
+      <div class="card-body">被霸凌者若遭最高負責人欺凌，內部幾乎無救濟管道</div>
+    </div>
+    <div class="card blue">
+      <div class="card-icon">⚖️</div>
+      <div class="card-title">立法歷程</div>
+      <div class="card-body">2025年12月2日立法院三讀通過，12月19日總統公布，<strong>2026年7月1日正式施行</strong></div>
+    </div>
   </div>
-  <div class="info-box orange">
-    <div class="box-title">⚠️ 注意：單純主觀感受不佳不等於霸凌</div>
-    <p>必須五項要件同時符合，才能認定為職場霸凌。雇主收到申訴後，須依法啟動調查程序，綜合事證判斷，不得單方面逕行認定。</p>
+  <div class="info-box red">
+    <div class="box-title">✦ 此次職安法修正被定位為 2013 年以來最大幅度調整</div>
+    <p>職場霸凌防治從道德義務正式升格為法律責任，違反者面臨行政、民事、刑事三重責任。</p>
   </div>
   `
 },
 {
-  chapter:'第一章　定義與認定',
-  title:'合理管理 vs. 職場霸凌',
-  subtitle:'主管必須清楚這條界線——超越這條線就可能構成霸凌',
+  chapter:'第二章　定義與識別',
+  title:'職場霸凌的法律定義',
+  subtitle:'職安法第22條之1 — 五大構成要件，缺一不可',
+  html:`
+  <div class="law-article">
+    <span class="art-num">法律定義（職安法第22條之1）</span>
+    <p>勞工於勞動場所執行職務，因事業單位人員<strong>利用職務或權勢</strong>等關係，<strong>逾越業務上必要且合理範圍</strong>，持續以冒犯、威脅、冷落、孤立、侮辱或其他不當之言詞或行為，<strong>致其身心健康遭受危害</strong>。但情節重大者，不以持續發生為必要。</p>
+  </div>
+  <div class="card-grid">
+    <div class="card blue"><div class="card-title">① 勞動場所執行職務中</div><div class="card-body">含出差、遠距等雇主指派場所，不限公司內部</div></div>
+    <div class="card blue"><div class="card-title">② 利用職務或權勢</div><div class="card-body">不限上對下，平行同事亦可能成立</div></div>
+    <div class="card blue"><div class="card-title">③ 逾越業務必要合理範圍</div><div class="card-body">手段與業務目的不符比例原則</div></div>
+    <div class="card purple"><div class="card-title">④ 持續不當言詞或行為</div><div class="card-body">非單次偶發衝突，需有持續或重複行為</div></div>
+    <div class="card purple"><div class="card-title">⑤ 致身心健康危害</div><div class="card-body">引發失眠、焦慮、憂鬱等身心症狀</div></div>
+  </div>
+  <div class="info-box red">
+    <div class="box-title">⚠ 情節重大者，即使只發生一次也可成立！</div>
+    <p>五項要件同時符合才能認定，但情節重大的單次行為（如嚴重肢體暴力）不需持續性即可構成。</p>
+  </div>
+  `
+},
+{
+  chapter:'第二章　定義與識別',
+  title:'霸凌七大樣態識別',
+  subtitle:'主管常見的誤踩紅線',
+  html:`
+  <div class="card-grid">
+    <div class="card red"><div class="card-title">① 吹毛求疵式挑剔</div><div class="card-body">針對特定員工，無論表現好壞，習慣性批評否定</div></div>
+    <div class="card red"><div class="card-title">② 排擠孤立</div><div class="card-body">故意不讓員工參與會議、不傳遞訊息、「訂便當不揪」</div></div>
+    <div class="card red"><div class="card-title">③ 人格攻擊</div><div class="card-body">罵「腦袋裝屎」「豬頭」等與工作無關、純粹貶低人格言詞</div></div>
+    <div class="card red"><div class="card-title">④ 不可能任務</div><div class="card-body">刻意交付明知無法完成的任務以逼退特定員工</div></div>
+    <div class="card red"><div class="card-title">⑤ 冷暴力威脅</div><div class="card-body">長期晾在一旁、沉默孤立、冷漠對待</div></div>
+    <div class="card red"><div class="card-title">⑥ 公開羞辱</div><div class="card-body">當眾大聲訓斥、拍桌怒罵、讓其難堪</div></div>
+    <div class="card red"><div class="card-title">⑦ 下班騷擾</div><div class="card-body">下班後持續以通訊軟體傳遞工作指令或批評（職務管道）</div></div>
+  </div>
+  <div class="info-box orange">
+    <div class="box-title">關鍵提醒：主管的言行是職場文化的基礎</div>
+    <p>以上任何一種樣態若持續針對特定員工，即可能構成職場霸凌。主管應以身作則，杜絕上述行為。</p>
+  </div>
+  `
+},
+{
+  chapter:'第三章　管理界線',
+  title:'合法管理 vs 職場霸凌',
+  subtitle:'關鍵不在罵不罵人，而在「目的」與「方式」',
   html:`
   <div class="table-wrap">
     <table>
-      <tr><th>情境</th><th>合理管理</th><th>可能構成霸凌</th></tr>
-      <tr><td>工作指正</td><td>私下具體指出問題，給予改善機會</td><td>公開會議中反覆羞辱、嘲諷能力</td></tr>
-      <tr><td>工作分配</td><td>依能力與職責合理分配</td><td>故意給予與職位不符的瑣碎任務、或長期不分配工作</td></tr>
-      <tr><td>績效評核</td><td>依客觀標準評分，說明依據</td><td>惡意給予不實低評，配合孤立手段</td></tr>
-      <tr><td>資訊分享</td><td>依職務需要給予必要資訊</td><td>刻意排除特定員工於會議及工作群組之外</td></tr>
-      <tr><td>要求改善</td><td>給予合理期限與資源支援</td><td>要求一人承擔需三人完成的工作量並持續施壓</td></tr>
+      <tr><th>✓ 合法管理行為</th><th>✗ 可能構成霸凌</th></tr>
+      <tr><td>基於事實、書面通知的績效改善計畫（PIP）</td><td>針對個人人格（非行為）的言語攻擊</td></tr>
+      <tr><td>明確說明錯誤原因：「這個數字錯三次了」</td><td>侮辱性言詞：「你腦袋裝屎嗎」</td></tr>
+      <tr><td>合理職務調動並有書面說明</td><td>刻意交付不可能完成的任務逼退員工</td></tr>
+      <tr><td>在合理工時範圍內的工作要求</td><td>深夜LINE轟炸、持續下班後騷擾</td></tr>
+      <tr><td>私下個別面談並留有面談紀錄</td><td>當眾公開羞辱、拍桌指責</td></tr>
     </table>
   </div>
   <div class="card-grid">
@@ -415,161 +468,262 @@ const slides = [
         3. 若第三人旁觀，會認為這是合理管理嗎？
       </div>
     </div>
-    <div class="card orange">
-      <div class="card-title">非霸凌但仍需注意</div>
+    <div class="card blue">
+      <div class="card-title">書面記錄是最好的保護</div>
       <div class="card-body">
-        顧客、客戶的謾罵 → 屬「外部第三方不法侵害」，依職安法第6條處理<br>
-        單次偶發衝突 → 雖非霸凌，雇主仍有保護勞工的義務
+        所有PIP、職務調動、任務交辦須有書面通知與雙方簽名面談紀錄，避免日後舉證困難。
       </div>
     </div>
   </div>
   `
 },
 {
-  chapter:'第二章　雇主防治義務',
-  title:'依公司規模分級的法定義務',
-  subtitle:'人數不同，義務層次不同——但所有雇主都有基本責任',
+  chapter:'第四章　企業義務',
+  title:'企業依規模分級義務',
+  subtitle:'10人／30人／100人義務一覽',
   html:`
   <div class="table-wrap">
     <table>
-      <tr><th>員工人數</th><th>法定義務</th></tr>
-      <tr><td>未達10人</td><td>採取適當預防及處理措施；接獲申訴須與勞工共同調查或協調；提供協助資源；不得不利對待申訴人</td></tr>
-      <tr><td>10人以上</td><td>＋ 設置申訴管道（電話、傳真、信箱、電子郵件等），並在工作場所顯著處公開揭示</td></tr>
-      <tr><td>30人以上</td><td>＋ 訂定書面防治措施及規範（8大必要內容）並公開；指定專責單位；對全體勞工辦理教育訓練；籌組申訴處理單位</td></tr>
-      <tr><td>100人以上</td><td>＋ 受理申訴後依法組成正式調查小組（外部專家比例不得少於½，任一性別比例不得少於⅓）</td></tr>
+      <tr><th>規模</th><th>法定義務</th></tr>
+      <tr><td><strong>10人以上</strong></td><td>建立專屬申訴管道（專用信箱、電話或通訊軟體），於工作場所明顯處公開揭示。申訴專線嚴禁與總機或客服共用。</td></tr>
+      <tr><td><strong>30人以上</strong></td><td>＋ 訂定防治措施及懲戒規範；訂定申訴及調查處理辦法；全員教育訓練（含主管專屬訓練）</td></tr>
+      <tr><td><strong>100人以上</strong></td><td>＋ 成立調查小組（外部專家≥½）；申復機制：審議委員會≥3人，外聘委員≥⅔；調查人員至少完成3小時訓練（有罰則）；設置外部專業委員人才庫</td></tr>
     </table>
   </div>
-  <div class="info-box blue">
-    <div class="box-title">關於員工人數計算</div>
-    <ul>
-      <li>集團母子公司：各自為獨立法人，分別計算</li>
-      <li>同一事業分散各地：依是否具獨立經營管理權綜合認定</li>
-      <li>如有疑義，可洽詢當地勞動檢查機構</li>
-    </ul>
+  <div class="info-box red">
+    <div class="box-title">⚠ 無論規模大小，所有企業「知悉即須處理」</div>
+    <p>未依規定限期改善可罰 <strong>3～75 萬元</strong>。知悉霸凌卻不處理，即屬違法——「裝沒看見」此路不通。</p>
   </div>
-  <div class="info-box green">
-    <div class="box-title">申訴管道設置提醒（10人以上）</div>
-    <p>申訴管道可為專線電話、傳真、專用信箱、電子信箱或通訊軟體，須在工作場所顯著處公開，確保勞工隨時可查知申訴資訊。</p>
+  <div class="info-box blue">
+    <div class="box-title">申訴管道設置提醒</div>
+    <p>申訴管道須確保員工隨時可查知申訴資訊，且申訴專線嚴禁與總機或客服共用，以保障申訴隱私。</p>
   </div>
   `
 },
 {
-  chapter:'第三章　知悉後的立即措施',
-  title:'知悉霸凌後，雇主應採取哪些立即措施？',
-  subtitle:'無論勞工是否正式申訴，知悉即須介入',
+  chapter:'第五章　申訴與處理',
+  title:'申訴流程與主管處理SOP',
+  subtitle:'接獲申訴後主管必知',
   html:`
   <div class="card-grid">
-    <div class="card blue">
-      <div class="card-title">情況一：已接獲申訴</div>
+    <div class="card blue"><div class="card-title">01 接獲申訴</div><div class="card-body">口頭、書面、匿名均算「知悉」，主管須立即啟動程序</div></div>
+    <div class="card blue"><div class="card-title">02 立即評估</div><div class="card-body">判斷是否需要隔離當事人，評估緊急安全風險</div></div>
+    <div class="card orange"><div class="card-title">03 通報HR／啟動調查</div><div class="card-body">嚴禁自行私下處理或施壓，務必通報人資部門</div></div>
+    <div class="card orange"><div class="card-title">04 調查進行</div><div class="card-body">保密、迴避、蒐集客觀證據，給予雙方陳述機會</div></div>
+    <div class="card green"><div class="card-title">05 結案與登錄</div><div class="card-body">結果須登錄主管機關指定網站，完成法定程序</div></div>
+    <div class="card green"><div class="card-title">06 後續追蹤</div><div class="card-body">確認改善落實、禁止報復行為，持續關注受害者狀況</div></div>
+  </div>
+  <div class="info-box red">
+    <div class="box-title">⚠ 申訴人保護</div>
+    <p>禁止因申訴而<strong>解僱、調職或其他不利處分</strong>。違反者可依法裁罰，且員工離職後仍可申訴，企業不得拒絕受理。</p>
+  </div>
+  `
+},
+{
+  chapter:'第五章　申訴與處理',
+  title:'最高負責人條款',
+  subtitle:'職安法第22條之3 — 新制最大突破',
+  html:`
+  <div class="info-box blue">
+    <div class="box-title">新制最大突破</div>
+    <p>當被申訴人為企業「最高負責人」時，受害勞工可<strong>繞過內部機制</strong>，直接向地方主管機關（勞工局）提起外部申訴，不須先走公司內部程序。</p>
+  </div>
+  <div class="card-grid">
+    <div class="card red">
+      <div class="card-title">「最高負責人」定義廣泛</div>
       <div class="card-body">
-        ① 考量申訴人意願，採取隔離等保護措施，避免再度受害<br>
-        ② 依需求提供法律諮詢、心理諮商、醫療或社會福利資源<br>
-        ③ 啟動調查程序，訪談相關人員；申訴人同意時可先協調，協調失敗則續行調查<br>
-        ④ 依調查結果對行為人予以適當懲戒
+        ▸ 不限於公司登記負責人，包含<strong>實質控制</strong>人事、組織、財務權限之人<br>
+        ▸ 例如「董娘」、「富二代」若實質掌握公司決策，亦納入規範
       </div>
     </div>
     <div class="card orange">
-      <div class="card-title">情況二：未申訴但雇主知悉</div>
+      <div class="card-title">外部申訴時效</div>
       <div class="card-body">
-        ① 主動訪談相關人員，釐清事實<br>
-        ② 告知被霸凌勞工可主張的權益及救濟途徑<br>
-        ③ 對相關人員適度調整工作內容或場所<br>
-        ④ 依被霸凌勞工意願，提供協助或轉介資源
+        ▸ 霸凌行為終了起 <strong>3年內</strong><br>
+        ▸ 離職後 <strong>1年內</strong>仍可申訴<br>
+        ▸ 以對勞工有利的較長期限為準
       </div>
     </div>
   </div>
-  <div class="info-box red">
-    <div class="box-title">「口頭關心」不等於立即有效措施</div>
-    <p>必須有實質的處置行動，例如調整工作安排、訪談查證、提供資源、啟動申訴程序等。單純口頭詢問「你還好嗎？」不符法定要求。</p>
-  </div>
-  <div class="info-box blue">
-    <div class="box-title">空間或人力不足時的彈性措施</div>
-    <p>可採居家辦公（WFH）或分時段隔離等方式，但所有調整須與勞工充分溝通，並符合勞基法調動規定。</p>
+  <div class="info-box orange">
+    <div class="box-title">📌 主管提醒</div>
+    <p>員工離職不代表申訴權利消失，企業仍可能於離職後面臨法律追訴。請確保所有管理行為均有書面記錄，以備不時之需。</p>
   </div>
   `
 },
 {
-  chapter:'第四章　申復與保護',
-  title:'申復程序與保護申訴人',
-  subtitle:'調查完成後，當事人不服可申復；申訴人受法律特別保護',
+  chapter:'第六章　罰則與責任',
+  title:'罰則一覽',
+  subtitle:'行政、民事、刑事三重責任',
   html:`
   <div class="table-wrap">
     <table>
-      <tr><th>階段</th><th>時限</th><th>說明</th></tr>
-      <tr><td>召開申復審議會議</td><td>收到申復後10個工作日內</td><td>申復人（申訴人或被申訴人）均有申復權；須給予陳述意見機會</td></tr>
-      <tr><td>作成申復決定</td><td>審議會議召開後30日內</td><td>若需重新調查，可再延長30日</td></tr>
-      <tr><td>書面通知申復人</td><td>決定後10個工作日內</td><td>—</td></tr>
-      <tr><td>重組申復調查小組</td><td>如有重大瑕疵或新事證</td><td>30～99人：外部專家至少1人；100人以上：外部專家≥⅔，任一性別≥⅓</td></tr>
+      <tr><th>責任類型</th><th>罰則</th><th>適用情形</th></tr>
+      <tr><td><strong>行政罰鍰（基本）</strong></td><td>3～75 萬元</td><td>違反防治義務，經限期改善未改善</td></tr>
+      <tr><td><strong>行政罰鍰（重罰）</strong></td><td>5～300 萬元</td><td>違反防治義務致勞工發生職業病</td></tr>
+      <tr><td><strong>加重罰鍰（最高）</strong></td><td>最高 450 萬元</td><td>依違反情節嚴重性加重至法定最高額½</td></tr>
+      <tr><td><strong>民事連帶責任</strong></td><td>不定額損害賠償</td><td>勞工身心受損害之民事連帶損害賠償</td></tr>
+      <tr><td><strong>刑事責任</strong></td><td>最高 5 年有期徒刑</td><td>違反安全衛生義務致勞工死亡（修法提高）</td></tr>
     </table>
   </div>
   <div class="info-box red">
-    <div class="box-title">對申訴人的保護——雇主絕對不可以做的事</div>
-    <ul>
-      <li>不得因勞工提出申訴、協助調查或擔任證人，對其解僱、降職、減薪、調職或其他不利處分</li>
-      <li>即使勞工已離職，案件仍須依法處理；不得以「已離職」為由拒絕</li>
-      <li>調查及申復期間，所有職務或地點調整均須與勞工充分溝通並符合勞基法</li>
-    </ul>
-  </div>
-  <div class="info-box orange">
-    <div class="box-title">例外情形</div>
-    <p>申訴人若經查證惡意虛構事實，雇主得依規定予以懲處，並不得給予申復期間的額外保護。</p>
+    <div class="box-title">重要觀念：主管個人亦可能面臨法律追究</div>
+    <p>執行霸凌行為的主管可能負擔<strong>民事連帶責任</strong>，不能以「奉命行事」為由脫責。行政罰鍰最高達 450 萬元，主管應嚴肅看待法律風險。</p>
   </div>
   `
 },
 {
-  chapter:'第五章　申訴受理須知',
-  title:'申訴受理的關鍵注意事項',
-  subtitle:'什麼情況必須受理？什麼情況可以不予受理？',
+  chapter:'第六章　罰則與責任',
+  title:'主管必做事項（法遵清單）',
+  subtitle:'以下為主管個人應立即落實的行動，避免法律風險',
   html:`
   <div class="card-grid">
     <div class="card green">
-      <div class="card-title">必須受理的情形</div>
-      <div class="card-body">
-        書面、電子郵件、口頭均可受理<br>
-        資料不齊全 → 通知補充，不得直接拒絕<br>
-        勞工離職後（限權勢霸凌）→ 離職後1年內或霸凌終了後3年內，擇對勞工有利的較長期限<br>
-        同事或家屬具名代為陳情 → 主動了解並依本人意願協助
-      </div>
+      <div class="card-icon">📝</div>
+      <div class="card-title">文件留痕</div>
+      <div class="card-body">所有績效改善計畫（PIP）、職務調動、任務交辦須有書面通知與雙方簽名面談紀錄</div>
     </div>
     <div class="card red">
-      <div class="card-title">可合法不予受理的情形</div>
-      <div class="card-body">
-        完全匿名（無任何可辨識身分資訊）<br>
-        明顯與工作無關<br>
-        內容無具體事實<br>
-        同一事件已處理完畢<br>
-        勞工已撤回申訴<br>
-        超過法定申訴期限<br>
-        ⚠ 須在10個工作日內書面通知理由
-      </div>
+      <div class="card-icon">🚫</div>
+      <div class="card-title">禁止情緒管理</div>
+      <div class="card-body">禁止公開羞辱、拍桌怒罵或與工作無關的人格攻擊言詞</div>
     </div>
-  </div>
-  <div class="info-box blue">
-    <div class="box-title">特殊情況處理</div>
-    <ul>
-      <li><strong>HR自己是當事人：</strong>基於利益迴避，改由其他人員或外部專家接手，否則違法</li>
-      <li><strong>被申訴人是最高負責人（董事長、總經理等）：</strong>勞工可直接向地方主管機關申訴，無需先經公司內部程序</li>
-      <li><strong>派遣勞工：</strong>申訴處理方式比照要派單位之勞工，並與派遣單位共同調查</li>
-    </ul>
+    <div class="card orange">
+      <div class="card-icon">📱</div>
+      <div class="card-title">下班通訊管理</div>
+      <div class="card-body">非緊急情況避免於下班後透過職務管道持續聯繫員工</div>
+    </div>
+    <div class="card purple">
+      <div class="card-icon">🔒</div>
+      <div class="card-title">保密義務</div>
+      <div class="card-body">申訴案件相關資訊須嚴格保密，不得洩露給非必要知情人員</div>
+    </div>
+    <div class="card blue">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">迴避義務</div>
+      <div class="card-body">若與申訴案件有利害關係，須主動迴避，不得參與調查或決策</div>
+    </div>
+    <div class="card green">
+      <div class="card-icon">🎓</div>
+      <div class="card-title">完成教育訓練</div>
+      <div class="card-body">依法完成主管專屬訓練，調查小組成員須完成至少3小時訓練</div>
+    </div>
   </div>
   `
 },
 {
-  chapter:'第六章　課程總結',
-  title:'主管必知重點整理',
-  subtitle:'完成課程，準備進行 20 題測驗',
+  chapter:'第七章　實務應用',
+  title:'常見誤解破除',
+  subtitle:'主管必須正確理解的法律觀念',
+  html:`
+  <div class="scenario-box">
+    <div class="sc-label">Q 誤解一</div>
+    <div class="sc-case">「訂便當沒揪也算霸凌？」</div>
+    <div style="font-size:.85rem;color:var(--ink2);line-height:1.75">→ 單次偶發未必構成，但若<strong>持續孤立</strong>特定員工、排擠於社交場合之外，則可能成立。</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label">Q 誤解二</div>
+    <div class="sc-case">「只要員工沒有診斷證明，就不算？」</div>
+    <div style="font-size:.85rem;color:var(--ink2);line-height:1.75">→ 不以取得精神科診斷為必要，但勞工須能舉證身心受損，主管應避免製造高壓環境。</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label">Q 誤解三</div>
+    <div class="sc-case">「是嚴格管理，不是霸凌」</div>
+    <div style="font-size:.85rem;color:var(--ink2);line-height:1.75">→ 關鍵在目的與方式：<strong>有事實依據的批評≠霸凌；針對人格的侮辱或刻意逼退=霸凌</strong>。</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label">Q 誤解四</div>
+    <div class="sc-case">「員工離職就沒事了」</div>
+    <div style="font-size:.85rem;color:var(--ink2);line-height:1.75">→ 離職後仍可於<strong>1年內</strong>向主管機關申訴，企業仍可能面對法律責任。</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label">Q 誤解五</div>
+    <div class="sc-case">「我只是轉述上級命令，不關我的事」</div>
+    <div style="font-size:.85rem;color:var(--ink2);line-height:1.75">→ 執行霸凌行為的主管仍可能負擔<strong>連帶責任</strong>，不能以「奉命行事」為由脫責。</div>
+  </div>
+  `
+},
+{
+  chapter:'第七章　實務應用',
+  title:'情境案例討論',
+  subtitle:'實務情境判斷',
+  html:`
+  <div class="scenario-box">
+    <div class="sc-label" style="background:var(--danger-light);color:var(--danger)">案例一：績效壓力型 ⚠ 構成霸凌</div>
+    <div class="sc-case">主管每週召集小明單獨面談，指責其「工作能力最差」、「留著你只是礙事」，並刻意將不可能在期限內完成的大型專案全數交給小明。</div>
+    <div style="font-size:.82rem;color:var(--ink3);line-height:1.7"><strong>判斷理由：</strong>人格攻擊＋不可能任務，逾越合理管理範圍</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label" style="background:var(--danger-light);color:var(--danger)">案例二：LINE訊息型 ⚠ 構成霸凌</div>
+    <div class="sc-case">主管每晚11點透過公司LINE群組發送工作指令，並要求員工即時回覆，若未回覆則隔日當眾點名批評。</div>
+    <div style="font-size:.82rem;color:var(--ink3);line-height:1.7"><strong>判斷理由：</strong>職務管道下班後騷擾＋公開羞辱</div>
+  </div>
+  <div class="scenario-box">
+    <div class="sc-label" style="background:var(--green-light);color:var(--green)">案例三：合理管理 ✓ 合法管理</div>
+    <div class="sc-case">主管發現員工連續三次計算錯誤，私下個別面談，指出具體錯誤事項，並發出書面改善通知，說明後續評核標準。</div>
+    <div style="font-size:.82rem;color:var(--ink3);line-height:1.7"><strong>判斷理由：</strong>有事實依據、私下進行、有書面紀錄，符合正當管理</div>
+  </div>
+  <div class="info-box blue">
+    <div class="box-title">判斷核心原則</div>
+    <p>管理行為是否「針對工作行為」而非「針對人格」，是區分合理管理與霸凌的最關鍵指標。</p>
+  </div>
+  `
+},
+{
+  chapter:'第八章　職場文化',
+  title:'主管如何建立健康職場文化',
+  subtitle:'法律合規是底線，友善職場是目標',
   html:`
   <div class="card-grid">
-    <div class="card green"><div class="card-title">1 霸凌五要件</div><div class="card-body">勞動場所、權勢關係、逾越合理範圍、持續性、身心危害——五項同時符合才成立</div></div>
-    <div class="card green"><div class="card-title">2 義務因規模分級</div><div class="card-body">10人以上設申訴管道；30人以上訂書面規範＋教育訓練；100人以上須組調查小組</div></div>
-    <div class="card green"><div class="card-title">3 知悉即須介入</div><div class="card-body">不論是否正式申訴，知悉疑似霸凌即應採取立即有效措施，單純口頭關心不夠</div></div>
-    <div class="card green"><div class="card-title">4 調查有時限</div><div class="card-body">依規模30日、4個月或2個月不等；協調期不計；勞工報警離職仍須完成調查</div></div>
-    <div class="card green"><div class="card-title">5 保護申訴人</div><div class="card-body">不得降職、減薪、調職等不利對待；申復雙方均有權利；紀錄保存3年</div></div>
-    <div class="card green"><div class="card-title">6 違規代價</div><div class="card-body">罰鍰最高75萬；最高負責人霸凌成立最高100萬；行政、民事、刑事三重責任</div></div>
+    <div class="card blue">
+      <div class="card-icon">💬</div>
+      <div class="card-title">正向溝通</div>
+      <div class="card-body">批評針對行為而非人格；稱讚公開、糾正私下；說明理由，不任意斥責</div>
+    </div>
+    <div class="card green">
+      <div class="card-icon">📊</div>
+      <div class="card-title">透明管理</div>
+      <div class="card-body">績效標準公開明確；任務分配合理；避免針對性刁難特定員工</div>
+    </div>
+    <div class="card blue">
+      <div class="card-icon">🤝</div>
+      <div class="card-title">主動關懷</div>
+      <div class="card-body">定期一對一面談；注意員工情緒與工作壓力；鼓勵員工反映問題</div>
+    </div>
+    <div class="card green">
+      <div class="card-icon">🎯</div>
+      <div class="card-title">以身作則</div>
+      <div class="card-body">主管的言行是團隊文化的標竿；杜絕職場冷暴力與排擠現象</div>
+    </div>
+    <div class="card orange">
+      <div class="card-icon">📋</div>
+      <div class="card-title">制度配合</div>
+      <div class="card-body">確保部門知悉申訴管道；申訴案件絕不施壓當事人；配合HR調查程序</div>
+    </div>
+    <div class="card purple">
+      <div class="card-icon">🌱</div>
+      <div class="card-title">持續學習</div>
+      <div class="card-body">完成法定教育訓練；持續更新法令知識；將友善職場納入日常管理</div>
+    </div>
+  </div>
+  `
+},
+{
+  chapter:'第八章　職場文化',
+  title:'重點總結',
+  subtitle:'主管的責任，就是第一道防線',
+  html:`
+  <div class="card-grid">
+    <div class="card green"><div class="card-title">✦ 法律正式施行</div><div class="card-body">7/1起，職場霸凌防治從道德義務正式升格為法律責任</div></div>
+    <div class="card green"><div class="card-title">✦ 主管是文化基礎</div><div class="card-body">主管的言行是職場文化的基礎，也是法律責任的源頭</div></div>
+    <div class="card green"><div class="card-title">✦ 知悉即須處理</div><div class="card-body">知悉霸凌卻不處理，即屬違法——「裝沒看見」此路不通</div></div>
+    <div class="card green"><div class="card-title">✦ 書面記錄保護自己</div><div class="card-body">所有管理行為應有書面記錄，避免日後舉證困難</div></div>
+    <div class="card green"><div class="card-title">✦ 友善職場是策略</div><div class="card-body">友善職場不是軟弱，而是留才與降低法律風險的最佳策略</div></div>
+    <div class="card green"><div class="card-title">✦ 三重責任</div><div class="card-body">違反者面臨行政（最高450萬）、民事連帶、刑事（最高5年）三重責任</div></div>
   </div>
   <div class="info-box blue" style="text-align:center;padding:1.75rem">
     <div class="box-title" style="font-size:1.05rem;margin-bottom:.9rem">🎉 恭喜完成課程！</div>
-    <p style="font-size:.875rem;margin-bottom:1.25rem">接下來進行 20 題測驗</p>
+    <p style="font-size:.875rem;margin-bottom:1.25rem">如有疑問，請洽人力資源部｜本課程依《職業安全衛生法》2026年7月1日施行新制編製</p>
     <button class="btn btn-primary" style="padding:.82rem 2.75rem;font-size:.95rem" onclick="goRegister()">進入測驗 →</button>
   </div>
   `
@@ -1002,3 +1156,4 @@ fetchVideoSettings();
 </script>
 </body>
 </html>
+
